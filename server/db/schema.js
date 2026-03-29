@@ -6,83 +6,79 @@ const dbPath = process.env.VERCEL
     : path.join(__dirname, 'planeat.db');
 const db = new sqlite3.Database(dbPath);
 
-const initDb = () => {
-    return new Promise((resolve, reject) => {
-        db.serialize(async () => {
-            try {
-                // Users table
-                db.run(`CREATE TABLE IF NOT EXISTS users (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name TEXT NOT NULL,
-                    email TEXT UNIQUE NOT NULL,
-                    password TEXT NOT NULL,
-                    role TEXT DEFAULT 'staff',
-                    institution TEXT,
-                    institution_type TEXT,
-                    institution_size INTEGER,
-                    sms_alerts BOOLEAN DEFAULT 1,
-                    overproduction_alerts BOOLEAN DEFAULT 1,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-                )`);
+const initDb = async () => {
+    try {
+        // Users table
+        await runAsync(`CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            email TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL,
+            role TEXT DEFAULT 'staff',
+            institution TEXT,
+            institution_type TEXT,
+            institution_size INTEGER,
+            sms_alerts BOOLEAN DEFAULT 1,
+            overproduction_alerts BOOLEAN DEFAULT 1,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`);
 
-                // Menu items
-                db.run(`CREATE TABLE IF NOT EXISTS menu_items (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    name TEXT NOT NULL,
-                    category TEXT,
-                    base_quantity INTEGER,
-                    unit TEXT DEFAULT 'kg',
-                    cost_per_unit REAL,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-                )`);
+        // Menu items
+        await runAsync(`CREATE TABLE IF NOT EXISTS menu_items (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            category TEXT,
+            base_quantity INTEGER,
+            unit TEXT DEFAULT 'kg',
+            cost_per_unit REAL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`);
 
-                // Daily predictions
-                db.run(`CREATE TABLE IF NOT EXISTS predictions (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    date TEXT NOT NULL,
-                    day_of_week TEXT,
-                    weather TEXT,
-                    event TEXT,
-                    predicted_count INTEGER,
-                    actual_count INTEGER,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-                )`);
+        // Daily predictions
+        await runAsync(`CREATE TABLE IF NOT EXISTS predictions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            date TEXT NOT NULL,
+            day_of_week TEXT,
+            weather TEXT,
+            event TEXT,
+            predicted_count INTEGER,
+            actual_count INTEGER,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`);
 
-                // Menu daily plan
-                db.run(`CREATE TABLE IF NOT EXISTS daily_menu (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    date TEXT NOT NULL,
-                    menu_item_id INTEGER,
-                    suggested_qty REAL,
-                    actual_qty REAL,
-                    waste_qty REAL DEFAULT 0,
-                    status TEXT DEFAULT 'pending',
-                    FOREIGN KEY (menu_item_id) REFERENCES menu_items(id)
-                )`);
+        // Menu daily plan
+        await runAsync(`CREATE TABLE IF NOT EXISTS daily_menu (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            date TEXT NOT NULL,
+            menu_item_id INTEGER,
+            suggested_qty REAL,
+            actual_qty REAL,
+            waste_qty REAL DEFAULT 0,
+            status TEXT DEFAULT 'pending',
+            FOREIGN KEY (menu_item_id) REFERENCES menu_items(id)
+        )`);
 
-                // Waste records
-                db.run(`CREATE TABLE IF NOT EXISTS waste_records (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    date TEXT NOT NULL,
-                    total_prepared REAL,
-                    total_consumed REAL,
-                    total_waste REAL,
-                    waste_cost REAL,
-                    co2_saved REAL,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-                )`);
+        // Waste records
+        await runAsync(`CREATE TABLE IF NOT EXISTS waste_records (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            date TEXT NOT NULL,
+            total_prepared REAL,
+            total_consumed REAL,
+            total_waste REAL,
+            waste_cost REAL,
+            co2_saved REAL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )`);
 
-                console.log("Database tables verified/created.");
-                
-                // Immediately seed data and resolve
-                await seedData();
-                resolve();
-            } catch (err) {
-                console.error("Database initialization error:", err);
-                reject(err);
-            }
-        });
-    });
+        console.log("Database tables verified/created.");
+        
+        // Immediately seed data
+        await seedData();
+        console.log("Seeding process completed.");
+    } catch (err) {
+        console.error("Database initialization error:", err);
+        throw err;
+    }
 };
 
 const runAsync = (sql, params = []) => {

@@ -20,11 +20,15 @@ router.get('/summary', auth, async (req, res) => {
         });
 
         // Today's specific impact
-        const today = records[0] ? records[0].total_waste : 0;
-        const previousAvg = 50; // hardcoded previous waste avg kg for visual purposes
+        let wasteSavedToday = 0;
+        let revenueImpact = 0;
         
-        const wasteSavedToday = Math.max(0, previousAvg - today); // kg
-        const revenueImpact = wasteSavedToday * 2.5; // money saved today
+        if (records.length > 0) {
+            const today = records[0].total_waste;
+            const previousAvg = 50; // hardcoded baseline
+            wasteSavedToday = Math.max(0, previousAvg - today);
+            revenueImpact = wasteSavedToday * 2.5;
+        }
 
         res.json({
             wasteSavedToday: wasteSavedToday.toFixed(1),

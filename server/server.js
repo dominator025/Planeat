@@ -5,7 +5,9 @@ const { initDb } = require('./db/schema');
 const app = express();
 
 // Initialize DB and Seed Data
-initDb();
+initDb()
+  .then(() => console.log("Database initialized and seeded successfully."))
+  .catch(err => console.error("Database initialization failed:", err));
 
 // Middleware
 app.use(express.json({ extended: false }));

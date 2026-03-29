@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Save, Bell, Database, Shield } from 'lucide-react';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
+import API_BASE_URL from '../config/api';
 
 const Settings = () => {
     const { user, login } = useContext(AuthContext);
@@ -18,7 +19,7 @@ const Settings = () => {
         const fetchSettings = async () => {
             try {
                 const token = localStorage.getItem('planeat_token');
-                const res = await fetch('http://localhost:5000/api/settings', {
+                const res = await fetch(`${API_BASE_URL}/settings`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.ok) {
@@ -51,7 +52,7 @@ const Settings = () => {
     const handleSave = async () => {
         try {
             const token = localStorage.getItem('planeat_token');
-            const res = await fetch('http://localhost:5000/api/settings', {
+            const res = await fetch(`${API_BASE_URL}/settings`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -76,7 +77,7 @@ const Settings = () => {
         if (!window.confirm("Are you sure you want to delete ALL tracking data? This cannot be undone.")) return;
         try {
             const token = localStorage.getItem('planeat_token');
-            const res = await fetch('http://localhost:5000/api/settings/reset', {
+            const res = await fetch(`${API_BASE_URL}/settings/reset`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` }
             });

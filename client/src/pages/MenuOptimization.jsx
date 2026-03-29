@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Save, AlertTriangle, AlertCircle, CheckCircle, TrendingDown, ArrowRight } from 'lucide-react';
+import API_BASE_URL from '../config/api';
 
 const MenuOptimization = () => {
     const [menuItems, setMenuItems] = useState([]);
@@ -15,7 +16,7 @@ const MenuOptimization = () => {
             const dateStr = new Date().toISOString().split('T')[0];
             
             // Try fetching today's saved plan first
-            const savedRes = await fetch(`http://localhost:5000/api/menu/daily/${dateStr}`, {
+            const savedRes = await fetch(`${API_BASE_URL}/menu/daily/${dateStr}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             
@@ -35,8 +36,8 @@ const MenuOptimization = () => {
 
             // Fallback: Generate from base items if no plan explicitly saved yet for today
             const [itemsRes, predictRes] = await Promise.all([
-                fetch('http://localhost:5000/api/menu/items', { headers: { 'Authorization': `Bearer ${token}` } }),
-                fetch('http://localhost:5000/api/predict/latest', { headers: { 'Authorization': `Bearer ${token}` } })
+                fetch(`${API_BASE_URL}/menu/items`, { headers: { 'Authorization': `Bearer ${token}` } }),
+                fetch(`${API_BASE_URL}/predict/latest`, { headers: { 'Authorization': `Bearer ${token}` } })
             ]);
 
             if (itemsRes.ok && predictRes.ok) {
@@ -89,7 +90,7 @@ const MenuOptimization = () => {
                 items: menuItems
             };
 
-            const res = await fetch('http://localhost:5000/api/menu/daily', {
+            const res = await fetch(`${API_BASE_URL}/menu/daily`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',

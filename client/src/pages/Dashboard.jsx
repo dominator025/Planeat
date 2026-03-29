@@ -5,6 +5,7 @@ import AlertBanner from '../components/ui/AlertBanner';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import { Users, TrendingDown, DollarSign, Leaf } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
+import API_BASE_URL from '../config/api';
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
@@ -22,9 +23,9 @@ const Dashboard = () => {
         const headers = { 'Authorization': `Bearer ${token}` };
 
         const [summaryRes, trendRes, latestRes] = await Promise.all([
-          fetch('http://localhost:5000/api/reports/summary', { headers }),
-          fetch('http://localhost:5000/api/reports/trend', { headers }),
-          fetch('http://localhost:5000/api/predict/latest', { headers })
+          fetch(`${API_BASE_URL}/reports/summary`, { headers }),
+          fetch(`${API_BASE_URL}/reports/trend`, { headers }),
+          fetch(`${API_BASE_URL}/predict/latest`, { headers })
         ]);
 
         if (summaryRes.ok && trendRes.ok && latestRes.ok) {

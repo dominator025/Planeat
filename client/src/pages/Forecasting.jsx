@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TrendingUp, Calendar, CloudLightning, Activity } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import AlertBanner from '../components/ui/AlertBanner';
+import API_BASE_URL from '../config/api';
 
 const Forecasting = () => {
     const [formData, setFormData] = useState({
@@ -21,7 +22,7 @@ const Forecasting = () => {
     const fetchHistory = async () => {
         try {
             const token = localStorage.getItem('planeat_token');
-            const res = await fetch('http://localhost:5000/api/predict/history', {
+            const res = await fetch(`${API_BASE_URL}/predict/history`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {
@@ -38,7 +39,7 @@ const Forecasting = () => {
         setLoading(true);
         try {
             const token = localStorage.getItem('planeat_token');
-            const res = await fetch('http://localhost:5000/api/predict', {
+            const res = await fetch(`${API_BASE_URL}/predict`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

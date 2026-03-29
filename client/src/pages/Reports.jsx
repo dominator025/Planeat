@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from 'recharts';
 import { Download, Filter } from 'lucide-react';
 
+import API_BASE_URL from '../config/api';
+
 const Reports = () => {
     const [trendData, setTrendData] = useState([]);
     const [days, setDays] = useState(7);
@@ -11,7 +13,7 @@ const Reports = () => {
         const fetchReports = async () => {
             try {
                 const token = localStorage.getItem('planeat_token');
-                const res = await fetch(`http://localhost:5000/api/reports/trend?days=${days}`, {
+                const res = await fetch(`${API_BASE_URL}/reports/trend?days=${days}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.ok) {

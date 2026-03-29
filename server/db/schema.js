@@ -1,7 +1,9 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
-const dbPath = path.join(__dirname, 'planeat.db');
+const dbPath = process.env.VERCEL 
+    ? path.join('/tmp', 'planeat.db') 
+    : path.join(__dirname, 'planeat.db');
 const db = new sqlite3.Database(dbPath);
 
 const initDb = () => {
